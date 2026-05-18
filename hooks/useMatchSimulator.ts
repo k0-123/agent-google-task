@@ -240,11 +240,14 @@ export function useMatchSimulator(matchId: string, currentUserId?: string, curre
                 const added = Math.floor(Math.random() * 40) + 10;
                 const newStreak = Math.random() > 0.5 ? (s.current_streak || 0) + 1 : 0;
                 const bestStreak = Math.max(s.best_streak || 0, newStreak);
+                const isCorrect = newStreak > 0;
                 return { 
                   ...s, 
                   points: (s.points || 0) + added,
                   current_streak: newStreak,
                   best_streak: bestStreak,
+                  correct_predictions: (s.correct_predictions || 0) + (isCorrect ? 1 : 0),
+                  total_predictions: (s.total_predictions || 0) + 1,
                   profiles: s.profiles
                 };
               }
@@ -290,6 +293,32 @@ export function useMatchSimulator(matchId: string, currentUserId?: string, curre
     });
   }, [currentUserId, currentUserName]);
 
+  // Calculate dynamic over stats from last_6
+  const overStats = useMemo(() => {
+    const last6 = match.last_6 || [];
+    let runs = 0;
+    let wickets = 0;
+    let dots = 0;
+    let legalBalls = 0;
+
+    if (last6.length === 0) {
+      return { runs: 12, wickets: 1, dots: 2, economy: '12.0' };
+    }
+
+    last6.forEach(outcome => {
+      if (outcome === 'boundary_6') { runs += 6; legalBalls += 1; }
+      else if (outcome === 'boundary_4') { runs += 4; legalBalls += 1; }
+      else if (outcome === 'single') { runs += 1; legalBalls += 1; }
+      else if (outcome === 'wide') { runs += 1; }
+      else if (outcome === 'wicket') { wickets += 1; dots += 1; legalBalls += 1; }
+      else if (outcome === 'dot') { dots += 1; legalBalls += 1; }
+    });
+
+    const economy = legalBalls > 0 ? ((runs / legalBalls) * 6).toFixed(1) : '0.0';
+
+    return { runs, wickets, dots, economy };
+  }, [match.last_6]);
+
   return {
     isSimulating,
     simulationSpeed,
@@ -300,6 +329,7 @@ export function useMatchSimulator(matchId: string, currentUserId?: string, curre
     poll: POLLS[pollIndex],
     scores,
     userRank,
+    overStats,
     startSimulator,
     stopSimulator,
     setSimulationSpeed,

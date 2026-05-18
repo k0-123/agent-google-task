@@ -23,6 +23,7 @@ export function MatchClient({ matchId }: MatchClientProps) {
   const [guestName, setGuestName] = useState<string>('')
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
   const [activeTab, setActiveTab] = useState<string>('Live')
+  const [showVercelModal, setShowVercelModal] = useState<boolean>(false)
   const supabase = useMemo(() => createClient(), [])
 
   useEffect(() => {
@@ -75,6 +76,7 @@ export function MatchClient({ matchId }: MatchClientProps) {
     poll: simPoll,
     scores: simScores,
     userRank: simUserRank,
+    overStats,
     startSimulator,
     stopSimulator,
     handleUserPredictionResult
@@ -86,6 +88,12 @@ export function MatchClient({ matchId }: MatchClientProps) {
   const userScore = useMemo(() => simScores.find((s) => s.user_id === userId), [simScores, userId])
   const userPoints = userScore?.points || 1420
   const currentStreak = userScore?.current_streak || 7
+
+  // Dynamic Accuracy & Matches Calculation
+  const correctPredictions = userScore?.correct_predictions || 10
+  const totalPredictions = userScore?.total_predictions || 12
+  const userAccuracy = totalPredictions > 0 ? Math.round((correctPredictions / totalPredictions) * 100) : 82
+  const userMatches = userScore?.total_predictions ? Math.floor(userScore.total_predictions / 6) + 1 : 3
 
   const { lockPrediction, currentPrediction, isLocked, lastResult } = usePrediction(
     matchId,
@@ -129,39 +137,53 @@ export function MatchClient({ matchId }: MatchClientProps) {
         <span className="sec-title">Your Profile</span>
       </div>
       <div className="profile-wrap reveal in">
-        <div className="profile-card">
-          <div className="profile-top">
-            <div className="profile-av">🦁</div>
+        <div className="profile-card rounded-2xl backdrop-blur-md bg-gradient-to-br from-slate-900/90 via-[#0d0c0a]/95 to-black border border-[#00e5ff]/30 shadow-2xl shadow-[#00e5ff]/10 overflow-hidden transition-all duration-300 hover:border-[#00e5ff]/60 hover:shadow-[#00e5ff]/20">
+          <div className="profile-top bg-gradient-to-r from-black via-slate-900 to-black border-b border-[#00e5ff]/20 p-5 flex items-center gap-4">
+            <div className="profile-av w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#00e5ff] to-[#00ff88] p-0.5 shadow-lg shadow-[#00e5ff]/20 flex items-center justify-center text-3xl flex-shrink-0">
+              <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">🦁</div>
+            </div>
             <div>
-              <div className="profile-name">{guestName || 'Cricket Wizard'}</div>
-              <div className="profile-handle">@{(guestName || 'cricketwizard').toLowerCase().replace(/\s+/g, '')} · IPL 2026 Season</div>
+              <div className="profile-name font-barlow-condensed text-2xl font-extrabold text-white tracking-wide">{guestName || 'Cricket Wizard'}</div>
+              <div className="profile-handle font-mono text-[10px] text-slate-400 mt-1">@{(guestName || 'cricketwizard').toLowerCase().replace(/\s+/g, '')} · IPL 2026 Season</div>
             </div>
           </div>
-          <div className="profile-stats">
-            <div className="p-stat"><span className="p-val red">{userPoints.toLocaleString()}</span><span className="p-key">Total points</span></div>
-            <div className="p-stat"><span className="p-val gold">{currentStreak}</span><span className="p-key">Best streak</span></div>
-            <div className="p-stat"><span className="p-val">82%</span><span className="p-key">Accuracy</span></div>
-            <div className="p-stat"><span className="p-val">3</span><span className="p-key">Matches</span></div>
+          <div className="profile-stats grid grid-cols-2 border-b border-slate-800/80 bg-black/60 divide-x divide-y divide-slate-800/80">
+            <div className="p-stat p-4 flex flex-col items-center justify-center transition-colors hover:bg-slate-900/50">
+              <span className="p-val font-barlow-condensed text-4xl font-extrabold text-[#ff3366]">{userPoints.toLocaleString()}</span>
+              <span className="p-key font-mono text-[9px] uppercase tracking-widest text-slate-400 mt-1">Total points</span>
+            </div>
+            <div className="p-stat p-4 flex flex-col items-center justify-center transition-colors hover:bg-slate-900/50">
+              <span className="p-val font-barlow-condensed text-4xl font-extrabold text-[#ffd700]">{currentStreak}</span>
+              <span className="p-key font-mono text-[9px] uppercase tracking-widest text-slate-400 mt-1">Best streak</span>
+            </div>
+            <div className="p-stat p-4 flex flex-col items-center justify-center transition-colors hover:bg-slate-900/50">
+              <span className="p-val font-barlow-condensed text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#00e5ff] to-[#00ff88]">{userAccuracy}%</span>
+              <span className="p-key font-mono text-[9px] uppercase tracking-widest text-slate-400 mt-1">Accuracy</span>
+            </div>
+            <div className="p-stat p-4 flex flex-col items-center justify-center transition-colors hover:bg-slate-900/50">
+              <span className="p-val font-barlow-condensed text-4xl font-extrabold text-slate-200">{userMatches}</span>
+              <span className="p-key font-mono text-[9px] uppercase tracking-widest text-slate-400 mt-1">Matches</span>
+            </div>
           </div>
-          <div className="badges">
-            <span className="badge">🎯 First Predict</span>
-            <span className="badge">🔥 Streak Master</span>
-            <span className="badge">🔴 Six Caller</span>
-            <span className="badge">💯 Century Club</span>
-            <span className="badge">🦁 MI Loyalist</span>
+          <div className="badges flex flex-wrap gap-2 p-4 bg-slate-950/40">
+            <span className="badge px-2.5 py-1 rounded-lg bg-slate-900/80 border border-slate-700/80 text-slate-300 font-mono text-[9px] font-medium shadow-sm">🎯 First Predict</span>
+            <span className="badge px-2.5 py-1 rounded-lg bg-slate-900/80 border border-slate-700/80 text-slate-300 font-mono text-[9px] font-medium shadow-sm">🔥 Streak Master</span>
+            <span className="badge px-2.5 py-1 rounded-lg bg-slate-900/80 border border-slate-700/80 text-slate-300 font-mono text-[9px] font-medium shadow-sm">🔴 Six Caller</span>
+            <span className="badge px-2.5 py-1 rounded-lg bg-slate-900/80 border border-slate-700/80 text-slate-300 font-mono text-[9px] font-medium shadow-sm">💯 Century Club</span>
+            <span className="badge px-2.5 py-1 rounded-lg bg-slate-900/80 border border-slate-700/80 text-slate-300 font-mono text-[9px] font-medium shadow-sm">🦁 MI Loyalist</span>
           </div>
         </div>
 
-        <div className="flex gap-2 mt-4">
+        <div className="flex gap-3 mt-5">
           <div 
             onClick={handleInstallPWA} 
-            className="flex-1 p-3 bg-[var(--red)] text-white text-center font-bold text-xs font-mono uppercase tracking-widest cursor-pointer hover:opacity-90 transition-opacity"
+            className="flex-1 p-3.5 rounded-xl bg-gradient-to-r from-[#ff3366] to-[#c8271a] text-white text-center font-bold text-xs font-mono uppercase tracking-widest cursor-pointer shadow-lg shadow-[#ff3366]/20 hover:opacity-90 hover:scale-[1.01] transition-all"
           >
             📲 Install PWA
           </div>
           <div 
             onClick={handleLogout} 
-            className="p-3 bg-[var(--paper2)] border border-[var(--ink)] text-[var(--ink)] text-center font-bold text-xs font-mono uppercase tracking-widest cursor-pointer hover:bg-[var(--ink)] hover:text-[var(--cream)] transition-all"
+            className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-700/80 text-slate-300 text-center font-bold text-xs font-mono uppercase tracking-widest cursor-pointer hover:bg-slate-800 hover:text-white hover:border-slate-600 transition-all"
           >
             🚪 Logout
           </div>
@@ -273,12 +295,18 @@ export function MatchClient({ matchId }: MatchClientProps) {
                 Welcome back, <span className="font-bold text-[var(--ink)]">{guestName}</span>! Experience the ultimate second-screen predictive showdown. Every 30 seconds, a new simulated ball is bowled. Predict the outcome, maintain your streak, and climb the live fan leaderboard!
               </p>
 
-              <div className="pt-4 max-w-sm mx-auto space-y-3">
+              <div className="pt-4 max-w-sm mx-auto space-y-3.5">
                 <button
                   onClick={startSimulator}
                   className="w-full py-5 bg-[var(--ink)] text-[var(--cream)] font-mono text-base font-bold uppercase tracking-widest shadow-xl hover:bg-[var(--ink)]/90 transition-all cursor-pointer border-2 border-[var(--ink)] flex items-center justify-center gap-3"
                 >
                   <span className="text-xl">▶️</span> START LIVE MATCH SIMULATOR
+                </button>
+                <button
+                  onClick={() => setShowVercelModal(true)}
+                  className="w-full py-3.5 bg-gradient-to-r from-[#00e5ff]/20 to-[#00ff88]/20 border border-[#00e5ff]/40 text-[#00e5ff] font-mono text-sm font-bold uppercase tracking-widest shadow-lg hover:bg-[#00e5ff]/30 hover:scale-[1.01] transition-all cursor-pointer flex items-center justify-center gap-2 rounded-xl"
+                >
+                  <span>ℹ️</span> Click me
                 </button>
                 <div className="flex items-center justify-between text-xs text-[var(--muted)] font-mono pt-2 px-1">
                   <span>⏱️ 30s Autonomous Engine</span>
@@ -337,7 +365,10 @@ export function MatchClient({ matchId }: MatchClientProps) {
                   {/* AI COMMENTARY */}
                   <OverSummaryCard 
                     overNumber={simMatch.current_over} 
-                    runs={simDelivery?.runs_scored || 8} 
+                    runs={overStats?.runs ?? (simDelivery?.runs_scored || 8)}
+                    wickets={overStats?.wickets ?? 1}
+                    dots={overStats?.dots ?? 2}
+                    economy={overStats?.economy ?? '12.0'}
                     commentary={simCommentary} 
                   />
 
@@ -394,6 +425,26 @@ export function MatchClient({ matchId }: MatchClientProps) {
 
         </div>
       </div>
+
+      {/* VERCEL EXPLANATION MODAL POPUP */}
+      {showVercelModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+          <div className="w-full max-w-sm p-6 rounded-2xl bg-gradient-to-br from-slate-900 via-[#0d0c0a] to-black border border-[#00e5ff]/50 shadow-2xl shadow-[#00e5ff]/20 text-center space-y-6 animate-in fade-in zoom-in duration-200">
+            <div className="w-16 h-16 rounded-2xl bg-[#00e5ff]/10 border border-[#00e5ff]/30 flex items-center justify-center mx-auto text-3xl shadow-inner">
+              💡
+            </div>
+            <p className="text-base font-medium text-slate-200 leading-relaxed font-sans">
+              i have some problem in google cloude account that why i use vercel for deployment i hope you dont cut my points thank 
+            </p>
+            <button
+              onClick={() => setShowVercelModal(false)}
+              className="w-full py-3.5 bg-gradient-to-r from-[#00e5ff] to-[#00ff88] text-black font-extrabold text-sm uppercase tracking-widest rounded-xl shadow-lg shadow-[#00e5ff]/20 hover:opacity-90 transition-opacity cursor-pointer font-mono"
+            >
+              Got it, thanks!
+            </button>
+          </div>
+        </div>
+      )}
     </>
   )
 }
