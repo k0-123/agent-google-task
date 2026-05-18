@@ -236,3 +236,85 @@ body { font-family: var(--font-barlow), sans-serif; overflow-x: hidden; backgrou
 .reveal.in { opacity: 1; transform: translateY(0); }
 .reveal-fast { opacity: 0; transition: opacity 0.4s ease, transform 0.4s ease; transform: translateX(-10px); }
 .reveal-fast.in { opacity: 1; transform: translateX(0); }
+
+/* ── CLICK ME EVALUATOR BUTTON ── */
+.click-me-btn {
+  width: 100%;
+  padding: 16px 24px;
+  background: linear-gradient(135deg, #FF007F 0%, #7928CA 50%, #00E5FF 100%);
+  background-size: 200% 200%;
+  color: #FFFFFF;
+  font-family: var(--font-barlow-condensed), sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: 2px solid var(--ink);
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(255, 0, 127, 0.4);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: clickMePulse 2s infinite, clickMeBg 6s ease infinite;
+}
+
+.click-me-btn:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 15px 35px rgba(0, 229, 255, 0.5);
+  background: linear-gradient(135deg, #00E5FF 0%, #FF007F 50%, #7928CA 100%);
+  background-size: 200% 200%;
+}
+
+.click-me-btn:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: 0 5px 15px rgba(121, 40, 202, 0.4);
+}
+
+.click-me-btn::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: rotate(30deg);
+  animation: clickMeShimmer 3s infinite linear;
+}
+
+@keyframes clickMePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+@keyframes clickMeBg {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes clickMeShimmer {
+  0% { transform: translateX(-100%) rotate(30deg); }
+  100% { transform: translateX(100%) rotate(30deg); }
+}
+
+.click-me-icon {
+  font-size: 24px;
+  animation: bounceIcon 1s ease-in-out infinite alternate;
+}
+
+@keyframes bounceIcon {
+  0% { transform: translateY(0) scale(1); }
+  100% { transform: translateY(-5px) scale(1.15); }
+}
+

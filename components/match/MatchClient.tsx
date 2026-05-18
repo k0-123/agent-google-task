@@ -243,55 +243,62 @@ export function MatchClient({ matchId }: MatchClientProps) {
 
           {!isSimulating ? (
             /* PRE-MATCH LOBBY SCREEN */
-            <div className="p-8 space-y-8 text-center font-sans">
-              <div className="inline-block px-3 py-1 bg-[var(--red)]/10 text-[var(--red)] border border-[var(--red)]/20 text-xs font-mono uppercase tracking-widest font-bold">
-                ⚡ AUTONOMOUS SIMULATOR LOBBY
+            <div className="p-8 space-y-8 text-center font-sans reveal in">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--red)]/10 border border-[var(--red)]/20 text-[var(--red)] font-mono text-xs font-bold tracking-widest uppercase shadow-sm">
+                <span className="w-2 h-2 rounded-full bg-[var(--red)] animate-ping" />
+                <span>AUTONOMOUS SIMULATOR LOBBY</span>
               </div>
-              <h1 className="text-4xl font-serif font-bold text-[var(--ink)] italic leading-tight">
-                IPL 2026 FINAL: MUMBAI INDIANS VS CHENNAI SUPER KINGS
-              </h1>
-              <p className="text-sm text-[var(--muted)] max-w-md mx-auto leading-relaxed font-sans">
-                Welcome back, <span className="font-bold text-[var(--ink)]">{guestName}</span>! Experience the ultimate second-screen predictive showdown. Every 30 seconds, a new simulated ball is bowled. Predict the outcome, maintain your streak, and climb the live fan leaderboard!
+              <div className="space-y-2">
+                <div className="font-mono text-xs text-[var(--muted)] tracking-[0.2em] uppercase font-bold">MATCH 74 · THE GRAND FINALE</div>
+                <h1 className="text-4xl sm:text-5xl font-serif font-bold text-[var(--ink)] leading-[1.05] tracking-tight">
+                  MUMBAI INDIANS <span className="text-[var(--red)] font-light italic">vs</span> CHENNAI SUPER KINGS
+                </h1>
+              </div>
+              <p className="text-sm text-[var(--muted)] max-w-md mx-auto leading-relaxed font-sans bg-[var(--paper2)]/60 p-4 rounded-2xl border border-[var(--ink)]/5 shadow-inner">
+                Welcome back, <span className="font-extrabold text-[var(--ink)] bg-[var(--red)]/10 px-2 py-0.5 rounded text-[var(--red)]">{guestName}</span>! Experience the ultimate second-screen predictive showdown. Every 30 seconds, a new simulated ball is bowled. Predict the outcome, maintain your streak, and climb the live fan leaderboard!
               </p>
 
-              <div className="pt-4 max-w-sm mx-auto space-y-4">
+              <div className="pt-2 max-w-sm mx-auto space-y-4">
                 <button
                   onClick={startSimulator}
-                  className="w-full py-5 bg-[var(--ink)] text-[var(--cream)] font-mono text-base font-bold uppercase tracking-widest shadow-xl hover:bg-[var(--ink)]/90 transition-all cursor-pointer border-2 border-[var(--ink)] flex items-center justify-center gap-3"
+                  className="w-full py-4 bg-[var(--ink)] hover:bg-black text-[var(--cream)] font-mono text-base font-extrabold uppercase tracking-widest shadow-xl hover:shadow-2xl hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer rounded-2xl border border-white/10 flex items-center justify-center gap-3 group"
                 >
-                  <span className="text-xl">▶️</span> START LIVE MATCH SIMULATOR
+                  <span className="text-xl group-hover:scale-125 transition-transform duration-300">▶️</span> 
+                  <span>START LIVE MATCH SIMULATOR</span>
                 </button>
                 <button
                   onClick={() => setShowVercelModal(true)}
-                  className="w-full py-4 bg-gradient-to-r from-[#ff3366] via-[#ff007f] to-[#7928ca] text-white font-mono text-base font-extrabold uppercase tracking-widest shadow-2xl shadow-[#ff3366]/50 hover:scale-[1.03] active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-3 rounded-2xl border-2 border-[var(--ink)] animate-pulse relative overflow-hidden group"
+                  className="click-me-btn"
                 >
-                  <span className="absolute inset-0 w-full h-full bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                  <span className="text-2xl animate-bounce">🎁</span> 
+                  <span className="click-me-icon">🎁</span> 
                   <span>EVALUATOR NOTE: CLICK ME!</span>
                 </button>
-                <div className="flex items-center justify-between text-xs text-[var(--muted)] font-mono pt-2 px-1">
+                <div className="flex items-center justify-between text-xs text-[var(--muted)] font-mono pt-2 px-2">
                   <span>⏱️ 30s Autonomous Engine</span>
                   <button 
                     onClick={handleLogout}
-                    className="underline hover:text-[var(--red)] cursor-pointer"
+                    className="underline hover:text-[var(--red)] cursor-pointer font-bold"
                   >
                     Switch User / Logout
                   </button>
                 </div>
               </div>
 
-              <div className="border-t border-[var(--ink)]/10 pt-6 mt-8 grid grid-cols-3 gap-4 text-left">
-                <div className="p-4 bg-[var(--paper2)] border border-[var(--ink)]/10">
-                  <div className="text-lg font-bold font-serif text-[var(--ink)]">01. PREDICT</div>
-                  <div className="text-xs text-[var(--muted)] mt-1 font-sans">Lock your call before the 30s timer hits zero.</div>
+              <div className="border-t border-[var(--ink)]/10 pt-6 mt-8 grid grid-cols-3 gap-3 text-left">
+                <div className="p-4 bg-[var(--cream)] rounded-2xl border border-[var(--ink)]/10 shadow-sm hover:shadow-md hover:border-[var(--ink)]/30 transition-all group">
+                  <div className="font-mono text-[10px] text-[var(--red)] font-bold tracking-widest mb-1 group-hover:translate-x-0.5 transition-transform">01 / PREDICT</div>
+                  <div className="text-base font-serif font-bold text-[var(--ink)] leading-tight">Lock Call</div>
+                  <div className="text-xs text-[var(--muted)] mt-1 font-sans leading-normal">Before the 30s timer hits zero.</div>
                 </div>
-                <div className="p-4 bg-[var(--paper2)] border border-[var(--ink)]/10">
-                  <div className="text-lg font-bold font-serif text-[var(--ink)]">02. EARN</div>
-                  <div className="text-xs text-[var(--muted)] mt-1 font-sans">Win points, trigger confetti, and build your streak.</div>
+                <div className="p-4 bg-[var(--cream)] rounded-2xl border border-[var(--ink)]/10 shadow-sm hover:shadow-md hover:border-[var(--ink)]/30 transition-all group">
+                  <div className="font-mono text-[10px] text-[var(--gold)] font-bold tracking-widest mb-1 group-hover:translate-x-0.5 transition-transform">02 / EARN</div>
+                  <div className="text-base font-serif font-bold text-[var(--ink)] leading-tight">Win Points</div>
+                  <div className="text-xs text-[var(--muted)] mt-1 font-sans leading-normal">Trigger confetti & build streak.</div>
                 </div>
-                <div className="p-4 bg-[var(--paper2)] border border-[var(--ink)]/10">
-                  <div className="text-lg font-bold font-serif text-[var(--ink)]">03. DOMINATE</div>
-                  <div className="text-xs text-[var(--muted)] mt-1 font-sans">Outrank rival fans on the real-time leaderboard.</div>
+                <div className="p-4 bg-[var(--cream)] rounded-2xl border border-[var(--ink)]/10 shadow-sm hover:shadow-md hover:border-[var(--ink)]/30 transition-all group">
+                  <div className="font-mono text-[10px] text-[var(--blue)] font-bold tracking-widest mb-1 group-hover:translate-x-0.5 transition-transform">03 / DOMINATE</div>
+                  <div className="text-base font-serif font-bold text-[var(--ink)] leading-tight">Climb Ranks</div>
+                  <div className="text-xs text-[var(--muted)] mt-1 font-sans leading-normal">Outrank rival fans live.</div>
                 </div>
               </div>
             </div>
